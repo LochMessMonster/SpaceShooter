@@ -58,14 +58,14 @@ public class GameController : MonoBehaviour {
 				yield return new WaitForSeconds (spawnWait);
 			}
 			yield return new WaitForSeconds (waveWait);
-			if (playerDead) {
+			/*if (playerDead) {
 				if (lives > 0) {
 					Respawn ();
 				} else {
 					Destroy (player);
 					GameOver ();
 				}
-			}
+			}*/
 
 		}
 	}
@@ -96,6 +96,12 @@ public class GameController : MonoBehaviour {
 		player.SetActive (false);
 		Instantiate (playerExplosion, player.transform.position, player.transform.rotation);
 		playerDead = true;
+		
+		if (lives < 1) {
+			GameOver ();
+		} else {
+			Respawn ();
+		}
 
 		//Destroy (player);
 		//GameOver ();
