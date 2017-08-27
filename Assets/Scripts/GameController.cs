@@ -22,13 +22,13 @@ public class GameController : MonoBehaviour {
 	private int score;
 	private int lives;
 	private bool gameOver;
-	private bool restart;
+	//private bool restart;
 	private bool playerDead;
 	void Start () {
 		score = 0;
 		lives = 3;
 		gameOver = false;
-		restart = false;
+		//restart = false;
 		playerDead = false;
 		restartText.text = "";
 		gameOverText.text = "";
@@ -119,6 +119,6 @@ public class GameController : MonoBehaviour {
 		gameOverText.text = "Game Over!";
 		gameOver = true;
 		restartText.text = "Press 'R' for restart.";
-		restart = true;
+		//restart = true;
 	}
 }
