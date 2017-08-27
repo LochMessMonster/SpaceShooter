@@ -5,7 +5,6 @@ using UnityEngine;
 public class DestroyByContact : MonoBehaviour {
 
 	public GameObject explosion;
-	//public GameObject playerExplosion;
 	public int scoreValue;
 	private GameController gameController;
 
@@ -20,7 +19,7 @@ public class DestroyByContact : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider other) {
-		//compareTag(string) is slightly more performance efficient than ==
+		//compareTag(string) is v. v. v. slightly more performance efficient than ==
 		if (other.CompareTag ("Boundary") || other.CompareTag ("Enemy")) {
 			return;
 		}
@@ -28,13 +27,10 @@ public class DestroyByContact : MonoBehaviour {
 			Instantiate (explosion, transform.position, transform.rotation);
 		}
 		if (other.CompareTag ("Player")) {
-			//Instantiate (playerExplosion, other.transform.position, other.transform.rotation);
-			//gameController.GameOver ();
 			gameController.DestroyPlayer ();
 		}
 
 		gameController.AddScore (scoreValue);
-		//Destroy (other.gameObject);
 		Destroy (gameObject);
 	}
 }

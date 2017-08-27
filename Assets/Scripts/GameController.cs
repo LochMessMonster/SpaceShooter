@@ -12,6 +12,8 @@ public class GameController : MonoBehaviour {
 	public float spawnWait;
 	public float startWait;
 	public float waveWait;
+	public float respawnDelay;
+	public float alternatingWait;
 	public GameObject playerExplosion;
 
 	public GUIText scoreText;
@@ -22,14 +24,18 @@ public class GameController : MonoBehaviour {
 	private int score;
 	private int lives;
 	private bool gameOver;
-	//private bool restart;
 	private bool playerDead;
+	private bool invincible;
+	private Renderer playerRenderer;
+
 	void Start () {
+		playerRenderer = player.GetComponent<Renderer> ();
+
 		score = 0;
 		lives = 3;
 		gameOver = false;
-		//restart = false;
 		playerDead = false;
+		invincible = false;
 		restartText.text = "";
 		gameOverText.text = "";
 
@@ -58,15 +64,6 @@ public class GameController : MonoBehaviour {
 				yield return new WaitForSeconds (spawnWait);
 			}
 			yield return new WaitForSeconds (waveWait);
-			/*if (playerDead) {
-				if (lives > 0) {
-					Respawn ();
-				} else {
-					Destroy (player);
-					GameOver ();
-				}
-			}*/
-
 		}
 	}
 
@@ -74,6 +71,11 @@ public class GameController : MonoBehaviour {
 	public void AddScore (int newScoreValue) {
 		score += newScoreValue;
 		UpdateScores ();
+
+		if ((score % 500) == 0) {
+			AddLives (1);
+			UpdateLives ();
+		}
 	}
 
 	// Update score text with new score
@@ -92,26 +94,38 @@ public class GameController : MonoBehaviour {
 
 	// Destroying the player
 	public void DestroyPlayer () {
-		AddLives (-1);
-		player.SetActive (false);
-		Instantiate (playerExplosion, player.transform.position, player.transform.rotation);
-		playerDead = true;
+		if (!invincible) {
+			AddLives (-1);
+			player.SetActive (false);
+			Instantiate (playerExplosion, player.transform.position, player.transform.rotation);
+			playerDead = true;
 		
-		if (lives < 1) {
-			GameOver ();
-		} else {
-			Respawn ();
+			if (lives < 1) {
+				Destroy (player);
+				GameOver ();
+			} else {
+				StartCoroutine (Respawn ());
+			}
 		}
-
-		//Destroy (player);
-		//GameOver ();
 	}
 
-	void Respawn () {
+	IEnumerator Respawn () {
+		invincible = true;
+		yield return new WaitForSeconds (respawnDelay);
+
 		player.transform.position = new Vector3 (0.0f, 0.0f, 0.0f);
 		player.transform.rotation = Quaternion.identity;
 		player.SetActive (true);
 		playerDead = false;
+
+		bool alternate = true;
+		for (int i = 0; i < 25; i++) {
+			playerRenderer.enabled = alternate;
+			alternate = !alternate;
+			yield return new WaitForSeconds (alternatingWait);
+		}
+		player.SetActive (true);
+		invincible = false;
 	}
 
 	// Ending the game
@@ -119,6 +133,5 @@ public class GameController : MonoBehaviour {
 		gameOverText.text = "Game Over!";
 		gameOver = true;
 		restartText.text = "Press 'R' for restart.";
-		//restart = true;
 	}
 }
